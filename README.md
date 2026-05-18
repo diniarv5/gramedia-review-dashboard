@@ -103,7 +103,7 @@ python -m http.server 5500
 | Sentimen Positif | 1.758 (58,6%) |
 | Sentimen Negatif | 832 (27,7%) |
 | Sentimen Netral | 410 (13,7%) |
-| Rata-rata Rating | 3,5 / 5 ⭐ |
+| Rata-rata Rating | 4,3 / 5 ⭐ |
 
 ### Kategori Keluhan
 | Kategori | Keyword Utama | Frekuensi Tertinggi |
