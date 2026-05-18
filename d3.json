@@ -1,0 +1,125 @@
+{
+    "name": "Keluhan Gramedia",
+    "children": [
+        {
+            "name": "tidak",
+            "value": 310
+        },
+        {
+            "name": "beli",
+            "value": 271
+        },
+        {
+            "name": "gak",
+            "value": 132
+        },
+        {
+            "name": "baca",
+            "value": 130
+        },
+        {
+            "name": "premium",
+            "value": 123
+        },
+        {
+            "name": "lagi",
+            "value": 116
+        },
+        {
+            "name": "mau",
+            "value": 114
+        },
+        {
+            "name": "udah",
+            "value": 110
+        },
+        {
+            "name": "padahal",
+            "value": 99
+        },
+        {
+            "name": "nya",
+            "value": 97
+        },
+        {
+            "name": "gramedia",
+            "value": 92
+        },
+        {
+            "name": "bayar",
+            "value": 88
+        },
+        {
+            "name": "pembayaran",
+            "value": 81
+        },
+        {
+            "name": "harus",
+            "value": 79
+        },
+        {
+            "name": "tolong",
+            "value": 72
+        },
+        {
+            "name": "malah",
+            "value": 71
+        },
+        {
+            "name": "download",
+            "value": 69
+        },
+        {
+            "name": "juga",
+            "value": 67
+        },
+        {
+            "name": "bukunya",
+            "value": 62
+        },
+        {
+            "name": "masih",
+            "value": 62
+        },
+        {
+            "name": "jadi",
+            "value": 61
+        },
+        {
+            "name": "kenapa",
+            "value": 58
+        },
+        {
+            "name": "digital",
+            "value": 58
+        },
+        {
+            "name": "kok",
+            "value": 55
+        },
+        {
+            "name": "ebook",
+            "value": 54
+        },
+        {
+            "name": "belum",
+            "value": 53
+        },
+        {
+            "name": "paket",
+            "value": 51
+        },
+        {
+            "name": "dulu",
+            "value": 51
+        },
+        {
+            "name": "sangat",
+            "value": 50
+        },
+        {
+            "name": "aplikasinya",
+            "value": 50
+        }
+    ]
+}

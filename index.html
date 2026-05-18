@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Gramedia Digital</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:#0a0f1e;color:#e2e8f0;display:flex;min-height:100vh}
+
+/* Sidebar */
+.sidebar{width:240px;background:linear-gradient(180deg,#111827 0%,#0d1525 100%);height:100vh;position:fixed;top:0;left:0;padding:28px 20px;border-right:1px solid #1e293b;display:flex;flex-direction:column;gap:6px;z-index:100}
+.sidebar-brand{display:flex;align-items:center;gap:10px;margin-bottom:28px}
+.sidebar-brand .logo{width:36px;height:36px;background:linear-gradient(135deg,#38bdf8,#818cf8);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.sidebar-brand h2{font-size:15px;font-weight:700;color:#f1f5f9;line-height:1.2}
+.sidebar-brand small{font-size:10px;color:#64748b}
+.nav-label{font-size:10px;font-weight:600;color:#475569;text-transform:uppercase;letter-spacing:1px;padding:12px 10px 6px}
+.nav-item{display:flex;align-items:center;gap:10px;color:#94a3b8;text-decoration:none;padding:10px 12px;border-radius:10px;font-size:13px;font-weight:500;transition:all .2s}
+.nav-item:hover{background:#1e293b;color:#f1f5f9}
+.nav-item.active{background:linear-gradient(135deg,#1e3a5f,#1e2d5a);color:#38bdf8;border:1px solid #1e40af33}
+.nav-item .icon{font-size:16px;width:20px;text-align:center}
+
+/* Main */
+.main{margin-left:240px;padding:32px;flex:1}
+.page-header{margin-bottom:32px}
+.page-header h1{font-size:26px;font-weight:700;color:#f1f5f9;margin-bottom:6px}
+.page-header p{font-size:13px;color:#64748b}
+.badge{display:inline-block;background:#1e3a5f;color:#38bdf8;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;border:1px solid #1d4ed833;margin-left:10px}
+
+/* Cards */
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
+.card{background:linear-gradient(135deg,#1e293b,#162032);border:1px solid #1e293b;border-radius:16px;padding:22px 20px;position:relative;overflow:hidden;transition:transform .2s}
+.card:hover{transform:translateY(-3px)}
+.card::before{content:'';position:absolute;top:0;right:0;width:80px;height:80px;border-radius:50%;opacity:0.06;transform:translate(20px,-20px)}
+.card.c1::before{background:#38bdf8} .card.c2::before{background:#f87171} .card.c3::before{background:#34d399} .card.c4::before{background:#fb923c}
+.card h3{font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px}
+.card .val{font-size:32px;font-weight:700;color:#f1f5f9}
+.card .sub{font-size:11px;color:#64748b;margin-top:4px}
+.card .icon-big{position:absolute;top:18px;right:18px;font-size:22px;opacity:0.5}
+
+/* Nav cards */
+.nav-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.nav-card{background:linear-gradient(135deg,#1e293b,#162032);border:1px solid #1e293b;border-radius:16px;padding:24px;text-decoration:none;color:#e2e8f0;transition:all .3s;display:flex;align-items:center;gap:18px}
+.nav-card:hover{border-color:#38bdf833;background:linear-gradient(135deg,#1e3a5f22,#1e293b);transform:translateY(-2px)}
+.nav-card .nc-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.nav-card h3{font-size:15px;font-weight:600;color:#f1f5f9;margin-bottom:4px}
+.nav-card p{font-size:12px;color:#64748b;line-height:1.5}
+.nav-card .arrow{margin-left:auto;color:#334155;font-size:18px;transition:transform .2s}
+.nav-card:hover .arrow{transform:translateX(4px);color:#38bdf8}
+.nc1{background:linear-gradient(135deg,#0c3547,#0a2840)} .nc2{background:linear-gradient(135deg,#1a1a4e,#12123a)}
+.nc3{background:linear-gradient(135deg,#0f3d2e,#0a2d22)} .nc4{background:linear-gradient(135deg,#3d1f00,#2a1500)}
+
+.section-title{font-size:14px;font-weight:600;color:#94a3b8;margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid #1e293b}
+</style>
+</head>
+<body>
+<div class="sidebar">
+  <div class="sidebar-brand">
+    <div class="logo">📚</div>
+    <div><h2>Gramedia</h2><small>Dashboard Analytics</small></div>
+  </div>
+  <span class="nav-label">Menu</span>
+  <a href="index.html" class="nav-item active"><span class="icon">🏠</span> Overview</a>
+  <a href="sentiment.html" class="nav-item"><span class="icon">💬</span> Analisis Sentimen</a>
+  <a href="trend.html" class="nav-item"><span class="icon">📈</span> Tren Bulanan</a>
+  <a href="keyword.html" class="nav-item"><span class="icon">📊</span> Analisis Keluhan</a>
+</div>
+
+<div class="main">
+  <div class="page-header">
+    <h1>Dashboard Analisis Review <span class="badge">Gramedia Digital</span></h1>
+    <p>Ringkasan keseluruhan data review pengguna aplikasi Gramedia Digital · 2013–2026</p>
+  </div>
+
+  <div class="cards">
+    <div class="card c1">
+      <span class="icon-big">📝</span>
+      <h3>Total Review</h3>
+      <div class="val">3.000</div>
+      <div class="sub">2013 – 2026</div>
+    </div>
+    <div class="card c2">
+      <span class="icon-big">😞</span>
+      <h3>Review Negatif</h3>
+      <div class="val">832</div>
+      <div class="sub">27,7% dari total</div>
+    </div>
+    <div class="card c3">
+      <span class="icon-big">😊</span>
+      <h3>Review Positif</h3>
+      <div class="val">1.758</div>
+      <div class="sub">58,6% dari total</div>
+    </div>
+    <div class="card c4">
+      <span class="icon-big">⭐</span>
+      <h3>Rata-rata Rating</h3>
+      <div class="val">3,5</div>
+      <div class="sub">dari 5 bintang</div>
+    </div>
+  </div>
+
+  <div class="section-title">Navigasi Halaman Analisis</div>
+  <div class="nav-cards">
+    <a href="sentiment.html" class="nav-card">
+      <div class="nc-icon nc1">💬</div>
+      <div>
+        <h3>Analisis Sentimen</h3>
+        <p>Distribusi review Positif, Negatif, dan Netral dalam bentuk donut chart interaktif</p>
+      </div>
+      <span class="arrow">→</span>
+    </a>
+    <a href="trend.html" class="nav-card">
+      <div class="nc-icon nc2">📈</div>
+      <div>
+        <h3>Tren Bulanan</h3>
+        <p>Pola jumlah review dari tahun 2013 hingga 2026 dengan filter rentang tahun</p>
+      </div>
+      <span class="arrow">→</span>
+    </a>
+    <a href="radial.html" class="nav-card">
+      <div class="nc-icon nc3">🌐</div>
+      <div>
+        <h3>Radial Tree Keluhan</h3>
+        <p>Visualisasi hierarki keyword keluhan per kategori dalam bentuk radial bubble tree</p>
+      </div>
+      <span class="arrow">→</span>
+    </a>
+    <a href="keyword.html" class="nav-card">
+      <div class="nc-icon nc4">🔑</div>
+      <div>
+        <h3>Top Keyword Keluhan</h3>
+        <p>Ranking frekuensi keyword keluhan terbanyak dengan filter jumlah tampilan</p>
+      </div>
+      <span class="arrow">→</span>
+    </a>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analisis Keluhan – Gramedia Digital</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:#0a0f1e;color:#e2e8f0;display:flex;min-height:100vh}
+.sidebar{width:240px;background:linear-gradient(180deg,#111827,#0d1525);height:100vh;position:fixed;top:0;left:0;padding:28px 20px;border-right:1px solid #1e293b;display:flex;flex-direction:column;gap:6px;z-index:100}
+.sidebar-brand{display:flex;align-items:center;gap:10px;margin-bottom:28px}
+.sidebar-brand .logo{width:36px;height:36px;background:linear-gradient(135deg,#38bdf8,#818cf8);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.sidebar-brand h2{font-size:15px;font-weight:700;color:#f1f5f9;line-height:1.2}
+.sidebar-brand small{font-size:10px;color:#64748b}
+.nav-label{font-size:10px;font-weight:600;color:#475569;text-transform:uppercase;letter-spacing:1px;padding:12px 10px 6px}
+.nav-item{display:flex;align-items:center;gap:10px;color:#94a3b8;text-decoration:none;padding:10px 12px;border-radius:10px;font-size:13px;font-weight:500;transition:all .2s}
+.nav-item:hover{background:#1e293b;color:#f1f5f9}
+.nav-item.active{background:linear-gradient(135deg,#1e3a5f,#1e2d5a);color:#38bdf8;border:1px solid #1e40af33}
+.nav-item .icon{font-size:16px;width:20px;text-align:center}
+.main{margin-left:240px;padding:32px;flex:1}
+.page-header{margin-bottom:24px}
+.page-header h1{font-size:24px;font-weight:700;color:#f1f5f9;margin-bottom:6px}
+.page-header p{font-size:13px;color:#64748b}
+
+/* Category info cards */
+.cat-info-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
+.cat-info{display:flex;align-items:flex-start;gap:12px;border-radius:14px;padding:16px 18px}
+.cat-info.teknis{background:linear-gradient(135deg,#3d0f0f,#2d0a0a);border:1px solid #f8717122}
+.cat-info.harga{background:linear-gradient(135deg,#2d1f00,#1e1500);border:1px solid #fbbf2422}
+.cat-info.fitur{background:linear-gradient(135deg,#0f1a3d,#0a1228);border:1px solid #60a5fa22}
+.ci-icon{font-size:26px;flex-shrink:0;margin-top:2px}
+.ci-title{font-size:13px;font-weight:700;margin-bottom:4px}
+.ci-desc{font-size:11.5px;color:#94a3b8;line-height:1.5}
+.ci-desc b{color:#cbd5e1}
+
+/* Stat cards */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
+.stat-card{border-radius:14px;padding:18px 20px;display:flex;align-items:center;gap:14px}
+.s-teknis{background:linear-gradient(135deg,#3d0f0f,#2d0a0a);border:1px solid #f8717122}
+.s-harga{background:linear-gradient(135deg,#1e2d0f,#152208);border:1px solid #fbbf2422}
+.s-fitur{background:linear-gradient(135deg,#0f1a3d,#0a1228);border:1px solid #60a5fa22}
+.stat-icon{font-size:28px}
+.stat-lbl{font-size:11px;color:#94a3b8;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.stat-val{font-size:26px;font-weight:700;color:#f1f5f9}
+.stat-sub{font-size:11px;margin-top:2px}
+.s-teknis .stat-sub{color:#f87171}.s-harga .stat-sub{color:#fbbf24}.s-fitur .stat-sub{color:#60a5fa}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px}
+.panel{background:linear-gradient(135deg,#1e293b,#162032);border:1px solid #1e293b;border-radius:16px;padding:24px}
+.panel.full{grid-column:1/-1}
+.panel h2{font-size:16px;font-weight:600;color:#f1f5f9;margin-bottom:4px}
+.panel .sub{font-size:12px;color:#64748b;margin-bottom:20px}
+
+.sum-table{width:100%;border-collapse:collapse}
+.sum-table th{font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.5px;padding:8px 10px;border-bottom:1px solid #334155;text-align:left}
+.sum-table td{padding:12px 10px;border-bottom:1px solid #1e293b;font-size:13px;vertical-align:middle}
+.sum-table tr:last-child td{border-bottom:none}
+.sum-table tr:hover td{background:rgba(255,255,255,0.02)}
+.cat-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
+.bar-mini{height:5px;border-radius:3px;margin-top:5px}
+canvas{max-height:360px}
+</style>
+</head>
+<body>
+<div class="sidebar">
+  <div class="sidebar-brand">
+    <div class="logo">📚</div>
+    <div><h2>Gramedia</h2><small>Dashboard Analytics</small></div>
+  </div>
+  <span class="nav-label">Menu</span>
+  <a href="index.html" class="nav-item"><span class="icon">🏠</span> Overview</a>
+  <a href="sentiment.html" class="nav-item"><span class="icon">💬</span> Analisis Sentimen</a>
+  <a href="trend.html" class="nav-item"><span class="icon">📈</span> Tren Bulanan</a>
+  <a href="keyword.html" class="nav-item active"><span class="icon">📊</span> Analisis Keluhan</a>
+</div>
+
+<div class="main">
+  <div class="page-header">
+    <h1>📊 Analisis Keluhan per Kategori</h1>
+    <p>Perbandingan dominasi keluhan berdasarkan kelompok masalah: Teknis, Harga, dan Fitur</p>
+  </div>
+
+  <!-- Category descriptions -->
+  <div class="cat-info-row">
+    <div class="cat-info teknis">
+      <div class="ci-icon">🔧</div>
+      <div>
+        <div class="ci-title" style="color:#f87171">Masalah Teknis</div>
+        <div class="ci-desc">Keluhan soal <b>performa aplikasi</b>: error saat dibuka, aplikasi lambat (lemot), atau tiba-tiba crash/force close.</div>
+      </div>
+    </div>
+    <div class="cat-info harga">
+      <div class="ci-icon">💰</div>
+      <div>
+        <div class="ci-title" style="color:#fbbf24">Masalah Harga</div>
+        <div class="ci-desc">Keluhan soal <b>biaya berlangganan</b>: harga premium dianggap mahal, bingung dengan sistem koin/poin, atau keberatan membayar ulang.</div>
+      </div>
+    </div>
+    <div class="cat-info fitur">
+      <div class="ci-icon">📱</div>
+      <div>
+        <div class="ci-title" style="color:#60a5fa">Masalah Fitur</div>
+        <div class="ci-desc">Keluhan soal <b>fungsi yang tidak berjalan</b>: gagal download buku, fitur baca offline bermasalah, atau susah login ke akun.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stat Cards -->
+  <div class="stats-row">
+    <div class="stat-card s-teknis">
+      <div class="stat-icon">🔧</div>
+      <div>
+        <div class="stat-lbl">Masalah Teknis</div>
+        <div class="stat-val" id="tot-teknis">—</div>
+        <div class="stat-sub" id="pct-teknis">—</div>
+      </div>
+    </div>
+    <div class="stat-card s-harga">
+      <div class="stat-icon">💰</div>
+      <div>
+        <div class="stat-lbl">Masalah Harga</div>
+        <div class="stat-val" id="tot-harga">—</div>
+        <div class="stat-sub" id="pct-harga">—</div>
+      </div>
+    </div>
+    <div class="stat-card s-fitur">
+      <div class="stat-icon">📱</div>
+      <div>
+        <div class="stat-lbl">Masalah Fitur</div>
+        <div class="stat-val" id="tot-fitur">—</div>
+        <div class="stat-sub" id="pct-fitur">—</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts -->
+  <div class="grid2">
+    <div class="panel full">
+      <h2>🏆 Keluhan Terbanyak per Kategori</h2>
+      <div class="sub">Keyword dengan frekuensi tertinggi yang mewakili masing-masing kategori masalah</div>
+      <canvas id="mainChart"></canvas>
+    </div>
+    <div class="panel">
+      <h2>Proporsi Total Keluhan</h2>
+      <div class="sub">Perbandingan total frekuensi antar kategori</div>
+      <canvas id="summaryChart"></canvas>
+    </div>
+    <div class="panel">
+      <h2>Detail per Kategori</h2>
+      <div class="sub">Perwakilan keyword #1 tiap kategori</div>
+      <table class="sum-table">
+        <thead><tr><th>Kategori</th><th>Keyword #1</th><th>Frekuensi</th></tr></thead>
+        <tbody id="kwBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+const CATEGORIES = {
+  Teknis: {
+    color: '#f87171', bg: 'rgba(248,113,113,0.15)',
+    desc: 'Performa & bug aplikasi',
+    keywords: [
+      {name:'lemot', value:62}, {name:'error', value:45},
+      {name:'crash', value:38}, {name:'bug', value:29}, {name:'force close', value:22}
+    ]
+  },
+  Harga: {
+    color: '#fbbf24', bg: 'rgba(251,191,36,0.15)',
+    desc: 'Biaya & langganan',
+    keywords: [
+      {name:'premium', value:123}, {name:'bayar', value:88},
+      {name:'langganan', value:78}, {name:'mahal', value:55}, {name:'koin', value:44}
+    ]
+  },
+  Fitur: {
+    color: '#60a5fa', bg: 'rgba(96,165,250,0.15)',
+    desc: 'Fungsi & fitur aplikasi',
+    keywords: [
+      {name:'aplikasi', value:138}, {name:'baca', value:130},
+      {name:'download', value:69}, {name:'akses', value:67}, {name:'login', value:51}
+    ]
+  }
+};
+
+let mainChartInst = null, summaryChartInst = null;
+
+function updateStats(){
+  const grand = Object.values(CATEGORIES).reduce((s,c)=>s+c.keywords.reduce((a,b)=>a+b.value,0),0);
+  Object.entries(CATEGORIES).forEach(([cat,cfg])=>{
+    const tot = cfg.keywords.reduce((a,b)=>a+b.value,0);
+    document.getElementById('tot-'+cat.toLowerCase()).textContent = tot.toLocaleString('id');
+    document.getElementById('pct-'+cat.toLowerCase()).textContent = `${((tot/grand)*100).toFixed(1)}% dari total keluhan`;
+  });
+}
+
+function drawMain(){
+  const entries = Object.entries(CATEGORIES);
+  const top1 = entries.map(([cat,cfg])=>({cat, cfg, kw: cfg.keywords[0]}));
+
+  const labels  = top1.map(d=>d.cat);
+  const data    = top1.map(d=>d.kw.value);
+  const bgs     = top1.map(d=>d.cfg.bg);
+  const borders = top1.map(d=>d.cfg.color);
+
+  if(mainChartInst) mainChartInst.destroy();
+  mainChartInst = new Chart(document.getElementById('mainChart'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Frekuensi Keluhan',
+        data, backgroundColor: bgs, borderColor: borders,
+        borderWidth: 2, borderRadius: 10,
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      plugins: {
+        legend: {display: false},
+        tooltip: {
+          bodyFont: {family:'Inter', size:13},
+          titleFont: {family:'Inter', size:14, weight:'700'},
+          callbacks: {
+            title: ctx => `${top1[ctx[0].dataIndex].cat} — "${top1[ctx[0].dataIndex].kw.name}"`,
+            label: ctx => ` Frekuensi: ${ctx.parsed.x.toLocaleString('id')} keluhan`,
+            afterLabel: ctx => ` (${top1[ctx[0].dataIndex].cfg.desc})`
+          }
+        }
+      },
+      scales: {
+        x: {
+          ticks: {color:'#94a3b8', font:{family:'Inter'}},
+          grid: {color:'#1e293b'}, beginAtZero: true,
+          title: {display:true, text:'Frekuensi Keluhan', color:'#64748b', font:{family:'Inter',size:11}}
+        },
+        y: {
+          ticks: {
+            color: '#e2e8f0',
+            font: {family:'Inter', size:13, weight:'600'},
+            callback: (val, i) => `${top1[i].cat}  →  "${top1[i].kw.name}"`
+          },
+          grid: {display: false}
+        }
+      }
+    }
+  });
+}
+
+function drawSummary(){
+  const entries = Object.entries(CATEGORIES);
+  const labels  = entries.map(([k])=>k);
+  const data    = entries.map(([,c])=>c.keywords.reduce((a,b)=>a+b.value,0));
+  const bgs     = entries.map(([,c])=>c.bg);
+  const borders = entries.map(([,c])=>c.color);
+
+  if(summaryChartInst) summaryChartInst.destroy();
+  summaryChartInst = new Chart(document.getElementById('summaryChart'), {
+    type: 'doughnut',
+    data: {labels, datasets:[{data, backgroundColor:bgs, borderColor:borders, borderWidth:2, hoverBackgroundColor:borders}]},
+    options: {
+      responsive: true, cutout: '65%',
+      plugins: {
+        legend: {labels:{color:'#94a3b8', font:{family:'Inter',size:12}}},
+        tooltip: {
+          bodyFont:{family:'Inter'}, titleFont:{family:'Inter'},
+          callbacks: {label: ctx=>`${ctx.label}: ${ctx.parsed.toLocaleString('id')} (${((ctx.parsed/ctx.dataset.data.reduce((a,b)=>a+b,0))*100).toFixed(1)}%)`}
+        }
+      }
+    }
+  });
+}
+
+function drawTable(){
+  const top1 = Object.entries(CATEGORIES).map(([cat,cfg])=>({cat,cfg,kw:cfg.keywords[0]}));
+  const maxV = Math.max(...top1.map(d=>d.kw.value));
+  document.getElementById('kwBody').innerHTML = top1.map(d=>`
+    <tr>
+      <td>
+        <span class="cat-badge" style="background:${d.cfg.color}22;color:${d.cfg.color};border:1px solid ${d.cfg.color}44">${d.cat}</span>
+        <div style="font-size:10px;color:#64748b;margin-top:3px">${d.cfg.desc}</div>
+      </td>
+      <td>
+        <div style="font-weight:700;color:#f1f5f9;font-size:14px">"${d.kw.name}"</div>
+        <div class="bar-mini" style="width:${((d.kw.value/maxV)*100).toFixed(0)}%;background:${d.cfg.color}"></div>
+      </td>
+      <td><span style="font-weight:700;color:${d.cfg.color};font-size:15px">${d.kw.value}</span></td>
+    </tr>`).join('');
+}
+
+updateStats();
+drawMain();
+drawSummary();
+drawTable();
+</script>
+</body>
+</html>

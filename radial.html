@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Treemap Analisis Keluhan Gramedia Digital</title>
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #1e1e2f;
+      color: #ffffff;
+      padding: 20px;
+    }
+
+    #chart {
+      max-width: 900px;
+      margin: 30px auto;
+      background: #27293d;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.3);
+    }
+
+    h2 {
+      text-align: center;
+      color: #00f2c4;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h2>📊 Peta Kotak (Treemap) Kata Kunci Keluhan Pelanggan</h2>
+  <div id="chart"></div>
+
+  <script>
+    // 1. Membaca data dari file d3.json secara asinkronus
+    fetch('d3.json')
+      .then(response => response.json())
+      .then(jsonData => {
+
+        // 2. Transformasikan struktur data json menjadi format grafik
+        const chartData = jsonData.children.map(item => {
+          return { x: item.name, y: item.value };
+        });
+
+        // 3. Konfigurasi grafik Treemap yang bersih dan padat
+        const options = {
+          series: [{ data: chartData }],
+          legend: { show: false },
+          chart: { height: 450, type: 'treemap' },
+          title: { text: 'Klaster Kata Kunci Ulasan Negatif', align: 'center', style: { color: '#fff' } },
+          colors: ['#ff3b30', '#ff9500', '#ffcc00', '#4cd964', '#5ac8fa', '#007aff'],
+          plotOptions: {
+            treemap: {
+              distributed: true,
+              enableShades: true
+            }
+          }
+        };
+
+        // 4. Render grafik ke dalam div #chart
+        const chart = new ApexCharts(document.querySelector("#chart"), options);
+        chart.render();
+      })
+      .catch(error => console.error('Gagal memuat data d3.json:', error));
+  </script>
+</body>
+
+</html>

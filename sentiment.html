@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analisis Sentimen – Gramedia Digital</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:#0a0f1e;color:#e2e8f0;display:flex;min-height:100vh}
+.sidebar{width:240px;background:linear-gradient(180deg,#111827 0%,#0d1525 100%);height:100vh;position:fixed;top:0;left:0;padding:28px 20px;border-right:1px solid #1e293b;display:flex;flex-direction:column;gap:6px;z-index:100}
+.sidebar-brand{display:flex;align-items:center;gap:10px;margin-bottom:28px}
+.sidebar-brand .logo{width:36px;height:36px;background:linear-gradient(135deg,#38bdf8,#818cf8);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.sidebar-brand h2{font-size:15px;font-weight:700;color:#f1f5f9;line-height:1.2}
+.sidebar-brand small{font-size:10px;color:#64748b}
+.nav-label{font-size:10px;font-weight:600;color:#475569;text-transform:uppercase;letter-spacing:1px;padding:12px 10px 6px}
+.nav-item{display:flex;align-items:center;gap:10px;color:#94a3b8;text-decoration:none;padding:10px 12px;border-radius:10px;font-size:13px;font-weight:500;transition:all .2s}
+.nav-item:hover{background:#1e293b;color:#f1f5f9}
+.nav-item.active{background:linear-gradient(135deg,#1e3a5f,#1e2d5a);color:#38bdf8;border:1px solid #1e40af33}
+.nav-item .icon{font-size:16px;width:20px;text-align:center}
+.main{margin-left:240px;padding:32px;flex:1}
+.page-header{margin-bottom:28px}
+.page-header h1{font-size:24px;font-weight:700;color:#f1f5f9;margin-bottom:6px}
+.page-header p{font-size:13px;color:#64748b}
+
+/* Filter Bar */
+.filter-bar{background:linear-gradient(135deg,#1e293b,#162032);border:1px solid #1e293b;border-radius:14px;padding:18px 22px;margin-bottom:24px;display:flex;align-items:center;flex-wrap:wrap;gap:14px}
+.filter-bar label{font-size:12px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.6px}
+.filter-btn-group{display:flex;gap:8px;flex-wrap:wrap}
+.filter-btn{background:#0f172a;border:1px solid #334155;color:#94a3b8;padding:7px 16px;border-radius:8px;font-size:12px;font-family:'Inter',sans-serif;cursor:pointer;transition:all .2s;font-weight:500}
+.filter-btn:hover{border-color:#38bdf8;color:#38bdf8}
+.filter-btn.active{background:linear-gradient(135deg,#1e3a5f,#1e2d5a);border-color:#38bdf8;color:#38bdf8}
+.filter-divider{width:1px;height:28px;background:#334155}
+
+/* Layout */
+.chart-layout{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px}
+.panel{background:linear-gradient(135deg,#1e293b,#162032);border:1px solid #1e293b;border-radius:16px;padding:24px}
+.panel h2{font-size:16px;font-weight:600;color:#f1f5f9;margin-bottom:4px}
+.panel .sub{font-size:12px;color:#64748b;margin-bottom:20px}
+.panel-full{grid-column:1/-1}
+
+/* Stat Row */
+.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
+.stat-card{border-radius:12px;padding:16px 18px;display:flex;align-items:center;gap:14px}
+.s-pos{background:linear-gradient(135deg,#0f3d2e,#0a2d22);border:1px solid #34d39922}
+.s-neg{background:linear-gradient(135deg,#3d0f0f,#2d0a0a);border:1px solid #f8717122}
+.s-net{background:linear-gradient(135deg,#1e2d0f,#152208);border:1px solid #fbbf2422}
+.stat-icon{font-size:28px}
+.stat-label{font-size:11px;color:#94a3b8;font-weight:600;text-transform:uppercase;letter-spacing:.6px}
+.stat-val{font-size:24px;font-weight:700;color:#f1f5f9}
+.stat-pct{font-size:12px;margin-top:2px}
+.s-pos .stat-pct{color:#34d399} .s-neg .stat-pct{color:#f87171} .s-net .stat-pct{color:#fbbf24}
+
+canvas{max-width:100%}
+#donutChart{max-height:320px}
+#barSentChart{max-height:320px}
+</style>
+</head>
+<body>
+<div class="sidebar">
+  <div class="sidebar-brand">
+    <div class="logo">📚</div>
+    <div><h2>Gramedia</h2><small>Dashboard Analytics</small></div>
+  </div>
+  <span class="nav-label">Menu</span>
+  <a href="index.html" class="nav-item"><span class="icon">🏠</span> Overview</a>
+  <a href="sentiment.html" class="nav-item active"><span class="icon">💬</span> Analisis Sentimen</a>
+  <a href="trend.html" class="nav-item"><span class="icon">📈</span> Tren Bulanan</a>
+  <a href="keyword.html" class="nav-item"><span class="icon">📊</span> Analisis Keluhan</a>
+</div>
+
+<div class="main">
+  <div class="page-header">
+    <h1>💬 Analisis Sentimen</h1>
+    <p>Distribusi sentimen review pengguna Gramedia Digital berdasarkan klasifikasi ulasan</p>
+  </div>
+
+  <!-- Filter Bar -->
+  <div class="filter-bar">
+    <label>Tampilkan</label>
+    <div class="filter-btn-group" id="sentFilterGroup">
+      <button class="filter-btn active" onclick="setSentFilter('all',this)">Semua Sentimen</button>
+      <button class="filter-btn" onclick="setSentFilter('Positif',this)">Positif</button>
+      <button class="filter-btn" onclick="setSentFilter('Negatif',this)">Negatif</button>
+      <button class="filter-btn" onclick="setSentFilter('Netral',this)">Netral</button>
+    </div>
+    <div class="filter-divider"></div>
+    <label>Grafik</label>
+    <div class="filter-btn-group" id="chartTypeGroup">
+      <button class="filter-btn active" onclick="setChartType('donut',this)">Donut</button>
+      <button class="filter-btn" onclick="setChartType('pie',this)">Pie</button>
+      <button class="filter-btn" onclick="setChartType('bar',this)">Bar</button>
+    </div>
+  </div>
+
+  <!-- Stat Row -->
+  <div class="stat-row">
+    <div class="stat-card s-pos">
+      <div class="stat-icon">😊</div>
+      <div>
+        <div class="stat-label">Positif</div>
+        <div class="stat-val" id="valPos">1.758</div>
+        <div class="stat-pct">58,6% dari total</div>
+      </div>
+    </div>
+    <div class="stat-card s-neg">
+      <div class="stat-icon">😞</div>
+      <div>
+        <div class="stat-label">Negatif</div>
+        <div class="stat-val" id="valNeg">832</div>
+        <div class="stat-pct">27,7% dari total</div>
+      </div>
+    </div>
+    <div class="stat-card s-net">
+      <div class="stat-icon">😐</div>
+      <div>
+        <div class="stat-label">Netral</div>
+        <div class="stat-val" id="valNet">410</div>
+        <div class="stat-pct">13,7% dari total</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chart-layout">
+    <div class="panel">
+      <h2>Distribusi Sentimen</h2>
+      <div class="sub" id="chartSubTitle">Proporsi seluruh sentimen review</div>
+      <canvas id="donutChart"></canvas>
+    </div>
+    <div class="panel">
+      <h2>Perbandingan Jumlah</h2>
+      <div class="sub">Jumlah review per kategori sentimen</div>
+      <canvas id="barSentChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<script>
+const sentimentData = {Positif:1758, Negatif:832, Netral:410};
+const sentColors = ['#34d399','#f87171','#fbbf24'];
+const sentBg = ['rgba(52,211,153,0.15)','rgba(248,113,113,0.15)','rgba(251,191,36,0.15)'];
+const allLabels = ['Positif','Negatif','Netral'];
+const allVals = [1758,832,410];
+
+let currentFilter = 'all';
+let currentChartType = 'doughnut';
+let donutChart, barChart;
+
+function getFilteredData(){
+  if(currentFilter === 'all') return {labels:allLabels, data:allVals, colors:sentColors, bgs:sentBg};
+  const idx = allLabels.indexOf(currentFilter);
+  return {labels:[allLabels[idx]], data:[allVals[idx]], colors:[sentColors[idx]], bgs:[sentBg[idx]]};
+}
+
+function buildDonut(){
+  const fd = getFilteredData();
+  if(donutChart) donutChart.destroy();
+  donutChart = new Chart(document.getElementById('donutChart'),{
+    type: currentChartType === 'bar' ? 'bar' : currentChartType,
+    data:{
+      labels: fd.labels,
+      datasets:[{
+        data: fd.data,
+        backgroundColor: currentChartType==='bar' ? fd.colors : fd.bgs,
+        borderColor: fd.colors,
+        borderWidth: currentChartType==='bar' ? 0 : 2,
+        hoverBackgroundColor: fd.colors,
+        borderRadius: currentChartType==='bar' ? 8 : 0,
+      }]
+    },
+    options:{
+      responsive:true,
+      plugins:{
+        legend:{labels:{color:'#94a3b8',font:{family:'Inter',size:12}}},
+        tooltip:{callbacks:{
+          label: ctx => ` ${ctx.label}: ${ctx.parsed.toLocaleString('id')} (${((ctx.parsed/3000)*100).toFixed(1)}%)`
+        },bodyFont:{family:'Inter'},titleFont:{family:'Inter'}}
+      },
+      scales: currentChartType==='bar' ? {
+        x:{ticks:{color:'#94a3b8',font:{family:'Inter'}},grid:{color:'#1e293b'}},
+        y:{ticks:{color:'#94a3b8',font:{family:'Inter'}},grid:{color:'#1e293b'}}
+      } : {},
+      cutout: currentChartType==='doughnut' ? '65%' : undefined,
+    }
+  });
+}
+
+function buildBar(){
+  const fd = getFilteredData();
+  if(barChart) barChart.destroy();
+  barChart = new Chart(document.getElementById('barSentChart'),{
+    type:'bar',
+    data:{
+      labels: fd.labels,
+      datasets:[{
+        label:'Jumlah Review',
+        data: fd.data,
+        backgroundColor: fd.bgs,
+        borderColor: fd.colors,
+        borderWidth:2,
+        borderRadius:10,
+      }]
+    },
+    options:{
+      responsive:true, indexAxis:'y',
+      plugins:{legend:{display:false},
+        tooltip:{callbacks:{label: ctx=>` ${ctx.parsed.x.toLocaleString('id')} review`},bodyFont:{family:'Inter'},titleFont:{family:'Inter'}}
+      },
+      scales:{
+        x:{ticks:{color:'#94a3b8',font:{family:'Inter'}},grid:{color:'#1e293b'}},
+        y:{ticks:{color:'#94a3b8',font:{family:'Inter',size:13},font:{weight:'600'}},grid:{display:false}}
+      }
+    }
+  });
+}
+
+function setSentFilter(f, btn){
+  currentFilter = f;
+  document.querySelectorAll('#sentFilterGroup .filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('chartSubTitle').textContent = f==='all' ? 'Proporsi seluruh sentimen review' : `Detail sentimen: ${f}`;
+  buildDonut(); buildBar();
+}
+
+function setChartType(t, btn){
+  currentChartType = t === 'donut' ? 'doughnut' : t;
+  document.querySelectorAll('#chartTypeGroup .filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  buildDonut();
+}
+
+buildDonut(); buildBar();
+</script>
+</body>
+</html>
